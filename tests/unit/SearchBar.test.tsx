@@ -7,6 +7,7 @@ describe('SearchBar', () => {
   it('não dispara busca com input vazio', async () => {
     const onSearch = vi.fn();
     render(<SearchBar onSearch={onSearch} />);
+    expect(screen.getByLabelText(/buscar cidade/i)).toBeRequired();
     await userEvent.click(screen.getByRole('button', { name: /buscar/i }));
     expect(onSearch).not.toHaveBeenCalled();
   });
