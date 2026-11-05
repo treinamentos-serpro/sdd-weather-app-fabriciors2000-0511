@@ -32,7 +32,7 @@ em dispositivos móveis. Os detalhes ainda não decididos estão registrados em
 | FR-01 | O sistema deve permitir que a pessoa usuária informe um termo de busca para encontrar cidades. |
 | FR-02 | O sistema deve apresentar os resultados encontrados de forma que a pessoa usuária possa identificar e selecionar a cidade desejada. As informações de desambiguação necessárias ainda precisam ser decididas. |
 | FR-03 | Após a seleção de uma cidade, o sistema deve apresentar as condições climáticas atuais disponíveis para esse local. Os campos que compõem essas condições serão definidos após a escolha da fonte e a confirmação das necessidades de negócio. |
-| FR-04 | Para a cidade selecionada, o sistema deve apresentar uma previsão que cubra cinco dias. A definição de dia e os campos de previsão ainda precisam ser confirmados. |
+| FR-04 | Para a cidade selecionada, o sistema deve apresentar uma previsão de cinco datas consecutivas do calendário local, em ordem cronológica, com os campos disponíveis definidos no plano técnico. |
 | FR-05 | O sistema deve permitir escolher Celsius ou Fahrenheit para a exibição de temperaturas. A unidade escolhida deve ser aplicada consistentemente às temperaturas visíveis da cidade selecionada. |
 | FR-06 | O sistema deve permitir iniciar uma nova busca e selecionar outra cidade sem confundir os dados meteorológicos do novo local com os do local anterior. |
 | FR-07 | O sistema deve comunicar carregamento, ausência de resultados e falha ao buscar cidades ou carregar dados meteorológicos. Quando uma ação de recuperação estiver disponível, deve permitir que a pessoa usuária tente novamente. |
@@ -101,8 +101,11 @@ em dispositivos móveis. Os detalhes ainda não decididos estão registrados em
   que a previsão completa não está disponível e não deve preencher os dias
   ausentes com valores inventados.
 - **AC-3.4:** Quando a previsão for apresentada, então seus cinco dias devem
-  seguir uma definição única de período e ordenação, a ser confirmada antes da
-  implementação.
+  corresponder a cinco datas consecutivas do calendário local da cidade,
+  incluindo a primeira data diária retornada pela API, em ordem cronológica.
+  Essa decisão de entrega está registrada em
+  [`docs/weather-app-product-decisions.md`](../docs/weather-app-product-decisions.md);
+  aprovação formal de Produto para publicação externa permanece pendente.
 
 ### História 4 — Alternar a unidade de temperatura
 
@@ -167,7 +170,7 @@ em dispositivos móveis. Os detalhes ainda não decididos estão registrados em
 | Campo de busca vazio ou contendo apenas espaços | Não tratar como uma busca válida nem selecionar uma cidade implicitamente; informar a necessidade de um termo, se a pessoa tentar buscar. |
 | Busca sem resultados | Apresentar estado vazio, sem confundi-lo com falha ou carregamento. |
 | Mais de uma cidade com o mesmo nome | Permitir que a pessoa identifique a cidade correta antes de consultar o clima; os campos de desambiguação ainda precisam ser definidos. |
-| A busca falha ou excede o tempo de resposta | Comunicar que não foi possível concluir a busca e oferecer nova tentativa quando possível. A duração que caracteriza timeout precisa ser definida. |
+| A busca falha ou excede o tempo de resposta | Comunicar que não foi possível concluir a busca e oferecer nova tentativa quando possível. O timeout de 10 segundos adotado nesta entrega está registrado em `docs/weather-app-product-decisions.md`. |
 | A consulta meteorológica falha ou excede o tempo de resposta | Comunicar a falha para a consulta correspondente e não apresentar valores inventados. |
 | Resposta meteorológica vazia, incompleta ou inválida | Mostrar indisponibilidade para os dados ausentes; não substituir valores por dados não confirmados nem sugerir que a previsão cobre os cinco dias quando não cobre. |
 | A pessoa seleciona outra cidade durante uma consulta | Não associar a resposta anterior à nova seleção; identificar claramente qual cidade corresponde aos dados apresentados. |
@@ -198,7 +201,7 @@ em dispositivos móveis. Os detalhes ainda não decididos estão registrados em
 |---|---|---|
 | A fonte meteorológica pode estar indisponível, desatualizada ou não cobrir as regiões necessárias. | Consultas incompletas ou impossíveis e perda de confiança nos dados. | Confirmar cobertura, atualização, disponibilidade, limites e condições de uso antes de escolher a fonte; definir comunicação de falhas. |
 | Cidades homônimas podem levar a uma seleção incorreta. | A pessoa pode interpretar dados de uma localidade diferente. | Definir informações de desambiguação nos resultados e validar o fluxo de seleção. |
-| A expressão “previsão de cinco dias” pode gerar interpretações diferentes. | O produto pode exibir períodos ou quantidade de dias diferentes da expectativa. | Decidir se são dias do calendário local ou uma janela de 120 horas e definir o conteúdo de cada dia. |
+| A expressão “previsão de cinco dias” pode gerar interpretações diferentes. | O produto pode exibir períodos ou quantidade de dias diferentes da expectativa. | Para esta entrega, usar cinco datas consecutivas do calendário local, conforme `docs/weather-app-product-decisions.md`; solicitar confirmação formal antes de publicação externa. |
 | Campos meteorológicos e horários podem variar por fonte ou região. | A informação pode ser inconsistente ou difícil de interpretar. | Definir os campos mínimos, unidades, fuso horário e apresentação da última atualização após avaliar a fonte. |
 | Unidades inconsistentes entre clima atual e previsão. | A pessoa pode interpretar valores incorretamente. | Aplicar a unidade selecionada a todas as temperaturas visíveis e identificá-la junto aos valores. |
 | Respostas lentas, falhas de conexão ou dados incompletos. | Experiência confusa ou apresentação de informações enganosas. | Definir estados de carregamento, vazio, erro e timeout; não inventar dados nem atribuir resultados a outra cidade. |
@@ -234,19 +237,20 @@ identificadas no Discovery e fechar os critérios de produto:
    homônimas (por exemplo, estado/província e país)?
 4. Quais campos definem o clima atual e quais dados devem ser apresentados para
    cada dia da previsão?
-5. “Cinco dias” corresponde aos próximos cinco dias do calendário local ou a
-   uma janela contínua de 120 horas?
-6. Qual fonte meteorológica deve ser usada? Quais cobertura, frequência de
-   atualização, disponibilidade, limites, atribuição e condições de uso são
-   necessários?
+5. A definição de cinco datas consecutivas do calendário local adotada nesta
+   entrega atende à expectativa de Produto ou deve ser substituída por uma
+   janela contínua de 120 horas?
+6. A fonte Open-Meteo adotada para esta entrega atende à cobertura, frequência
+   de atualização, disponibilidade, limites, atribuição e condições de uso
+   requeridos para publicação externa?
 7. A interface deve mostrar horário local da cidade, origem dos dados e horário
    da última atualização? Como agir se a fonte não fornecer esses metadados?
 8. A unidade inicial deve ser Celsius ou Fahrenheit, ou determinada por alguma
    regra? A preferência deve persistir após recarregar ou reabrir a aplicação?
 9. A troca entre Celsius e Fahrenheit afeta somente temperaturas? Como devem
    ser tratadas outras grandezas meteorológicas?
-10. Qual deve ser o tempo máximo de espera antes de indicar timeout e quais
-    metas de desempenho são esperadas para busca e consultas?
+10. O timeout de 10 segundos adotado nesta entrega é adequado? Quais metas de
+    desempenho são esperadas para busca e consultas?
 11. Qual idioma ou conjunto de idiomas deve ser suportado?
 12. Quais dispositivos, navegadores, larguras de tela e orientações devem ser
     suportados? Há um padrão de acessibilidade ou nível de conformidade exigido?

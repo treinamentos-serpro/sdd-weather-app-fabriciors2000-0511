@@ -1,4 +1,10 @@
-import type { City, CurrentWeather, ForecastDay, WeatherData } from '../types/weather';
+import type {
+  City,
+  CurrentWeather,
+  ForecastDay,
+  FiveDayForecast,
+  WeatherData,
+} from '../types/weather';
 
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
@@ -124,7 +130,11 @@ function isCityResult(value: unknown): value is Record<string, unknown> & {
     typeof value.name === 'string' &&
     value.name.trim().length > 0 &&
     isFiniteNumber(value.latitude) &&
+    value.latitude >= -90 &&
+    value.latitude <= 90 &&
     isFiniteNumber(value.longitude) &&
+    value.longitude >= -180 &&
+    value.longitude <= 180 &&
     (value.country === undefined || typeof value.country === 'string') &&
     (value.admin1 === undefined || typeof value.admin1 === 'string')
   );
@@ -225,14 +235,24 @@ function mapCurrent(c: CurrentResponse): CurrentWeather {
   };
 }
 
-function mapForecast(d: DailyResponse): ForecastDay[] {
-  return d.time.map((date, i) => ({
-    date,
-    weatherCode: d.weather_code?.[i] ?? null,
-    max: d.temperature_2m_max?.[i] ?? null,
-    min: d.temperature_2m_min?.[i] ?? null,
-    precipitationProbability: d.precipitation_probability_max?.[i] ?? null,
-  }));
+function mapForecastDay(d: DailyResponse, index: number): ForecastDay {
+  return {
+    date: d.time[index],
+    weatherCode: d.weather_code?.[index] ?? null,
+    max: d.temperature_2m_max?.[index] ?? null,
+    min: d.temperature_2m_min?.[index] ?? null,
+    precipitationProbability: d.precipitation_probability_max?.[index] ?? null,
+  };
+}
+
+function mapForecast(d: DailyResponse): FiveDayForecast {
+  return [
+    mapForecastDay(d, 0),
+    mapForecastDay(d, 1),
+    mapForecastDay(d, 2),
+    mapForecastDay(d, 3),
+    mapForecastDay(d, 4),
+  ];
 }
 
 /**

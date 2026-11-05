@@ -89,6 +89,22 @@ describe('weatherService', () => {
       await expect(searchCities('Unknown')).rejects.toBeInstanceOf(WeatherServiceError);
     });
 
+    it.each([
+      { latitude: -90.01, longitude: 0 },
+      { latitude: 90.01, longitude: 0 },
+      { latitude: 0, longitude: -180.01 },
+      { latitude: 0, longitude: 180.01 },
+    ])('rejects coordinates outside geographic bounds: %o', async (coordinates) => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetchOnce({
+          results: [{ id: 1, name: 'Unknown', country: 'Nowhere', ...coordinates }],
+        }),
+      );
+
+      await expect(searchCities('Unknown')).rejects.toMatchObject({ kind: 'invalid-response' });
+    });
+
     it('rejects non-OK responses', async () => {
       vi.stubGlobal('fetch', mockFetchOnce({}, false));
       await expect(searchCities('São Paulo')).rejects.toMatchObject({

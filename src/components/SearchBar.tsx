@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import type { City } from '../types/weather';
 
 interface SearchBarProps {
@@ -16,11 +16,17 @@ export default function SearchBar({
   disabled,
 }: SearchBarProps) {
   const [value, setValue] = useState('');
+  const [validationMessage, setValidationMessage] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setValidationMessage('Informe um termo de busca.');
+      return;
+    }
+    setValidationMessage('');
     onSearch(trimmed);
   }
 
@@ -40,14 +46,20 @@ export default function SearchBar({
           Buscar cidade
         </label>
         <input
+          ref={inputRef}
           id="city-search"
           type="text"
           required
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setValidationMessage('');
+          }}
           placeholder="Buscar cidade…"
           autoComplete="off"
           aria-controls={results.length > 0 ? 'city-search-results' : undefined}
+          aria-invalid={validationMessage ? true : undefined}
+          aria-describedby={validationMessage ? 'city-search-error' : undefined}
           className="min-w-0 flex-1 rounded-sm bg-transparent text-white placeholder-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400"
         />
         <button
@@ -60,7 +72,9 @@ export default function SearchBar({
       </div>
       {results.length > 0 && (
         <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-          {results.length} cidades encontradas.
+          {results.length === 1
+            ? '1 cidade encontrada.'
+            : `${results.length} cidades encontradas.`}
         </p>
       )}
       {results.length > 0 && (
@@ -79,6 +93,7 @@ export default function SearchBar({
                   onClick={() => {
                     onSelect?.(city);
                     setValue('');
+                    inputRef.current?.focus();
                   }}
                   className="w-full rounded-lg px-3 py-2 text-left transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-400"
                 >
@@ -89,6 +104,11 @@ export default function SearchBar({
             );
           })}
         </ul>
+      )}
+      {validationMessage && (
+        <p id="city-search-error" role="alert" className="mt-2 text-sm text-red-300">
+          {validationMessage}
+        </p>
       )}
     </form>
   );

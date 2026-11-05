@@ -1,19 +1,19 @@
 # Tarefas — Weather App
 
-Backlog de implementação ordenado por entrega e dependência. As decisões ainda
-abertas da especificação devem ser registradas antes de fixar a fonte e os
-detalhes de período, campos e apresentação; não se presume comportamento fora
+Backlog de implementação ordenado por entrega e dependência. Decisões técnicas
+aplicadas nesta entrega e pendências de aprovação de Produto estão registradas
+em `docs/weather-app-product-decisions.md`; não se presume comportamento fora
 do MVP.
 
 ## Decisões e contratos
 
 ### T-01 — Confirmar decisões de produto que desbloqueiam a integração
-- **Descrição:** Registrar a fonte aprovada (ou alternativa), cobertura e termos, atribuição, informações de desambiguação, definição dos cinco dias, campos meteorológicos mínimos, idioma, timeout e disponibilidade de metadados. Documentar também unidade inicial e comportamento responsivo/acessível acordados; manter sem persistência enquanto não houver decisão explícita.
+- **Descrição:** Registrar a fonte usada nesta entrega, cobertura e termos pendentes, atribuição, informações de desambiguação, definição dos cinco dias, campos meteorológicos mínimos, idioma, timeout e disponibilidade de metadados. Documentar também unidade inicial e comportamento responsivo/acessível; obter aprovação formal de Produto antes de publicação externa.
 - **Requisitos:** FR-01–FR-05; AC-3.4, AC-4.4; NFR-01–NFR-03, NFR-06.
 - **Critérios de aceite:**
   - Há registro consultável das decisões ou das pendências e responsáveis; nenhuma proposta do plano é apresentada como decisão já aprovada.
   - A definição de período e ordenação dos cinco dias, os campos mínimos e os metadados a apresentar estão explícitos.
-  - A fonte, cobertura, atribuição e condições de uso estão aprovadas antes da integração final.
+  - A fonte, cobertura, atribuição e condições de uso têm decisão registrada; aprovação formal de Produto para publicação externa está identificada como gate com responsável pendente.
 - **Dependências:** Nenhuma.
 - **Arquivos prováveis:** `docs/weather-app-product-decisions.md`
 - **Tipo:** Infra

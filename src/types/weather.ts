@@ -39,9 +39,17 @@ export interface ForecastDay {
   precipitationProbability: number | null;
 }
 
+export type FiveDayForecast = readonly [
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+];
+
 /** Agregado entregue à UI: cidade + clima atual + 5 dias de previsão. */
 export interface WeatherData {
   city: City;
   current: CurrentWeather;
-  forecast: ForecastDay[];
+  forecast: FiveDayForecast;
 }

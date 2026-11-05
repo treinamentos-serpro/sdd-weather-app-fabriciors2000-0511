@@ -9,11 +9,12 @@ apresentação, um hook de orquestração e um serviço isolado para comunicaç�
 a API meteorológica. O navegador chama a API pública diretamente; não há
 necessidade atual de backend, banco de dados ou gerenciamento global de estado.
 
-Open-Meteo é a fonte externa proposta porque fornece geocoding e previsão sem
-chave de API e já corresponde ao stack e aos serviços presentes no repositório.
-Essa escolha técnica precisa ser confirmada com Produto quanto a cobertura,
-disponibilidade, atribuição e condições de uso (FR-01 a FR-04; Open Questions 1,
-6 e 7 da spec).
+Open-Meteo é a fonte externa adotada para esta entrega SDD porque fornece
+geocoding e previsão sem chave de API e está definida nas instruções do
+repositório. A cobertura, disponibilidade, limites e condições de uso precisam
+de aprovação formal de Produto antes de publicação externa; as decisões e
+pendências estão em `docs/weather-app-product-decisions.md` (FR-01 a FR-04;
+Open Questions 1, 6 e 7 da spec).
 
 ```text
 ┌────────────────────────────────────────────┐
@@ -60,7 +61,7 @@ disponibilidade, atribuição e condições de uso (FR-01 a FR-04; Open Question
 | Vite 8 | Servidor de desenvolvimento e build já configurados no projeto. | Todos os fluxos |
 | Tailwind CSS 3 | Estilização responsiva, já presente no stack do projeto. | FR-05; User Story 5; NFR-01 |
 | Fetch API | Requisições HTTPS sem adicionar uma biblioteca HTTP para este escopo. | FR-01, FR-03 e FR-04 |
-| Open-Meteo Geocoding e Forecast APIs | Fonte proposta sem chave para busca geográfica e previsão; aprovação de cobertura e termos ainda pendente. | FR-01 a FR-04; risco de provedor |
+| Open-Meteo Geocoding e Forecast APIs | Fonte adotada para esta entrega; aprovação de cobertura, disponibilidade e termos para publicação externa ainda pendente. | FR-01 a FR-04; risco de provedor |
 | Vitest + Testing Library | Testes unitários e de componentes já configurados no projeto. | Acceptance Criteria 1–7 |
 | Playwright | Testes E2E dos fluxos principais e estados da aplicação; dependência já presente. | Acceptance Criteria 1–7 |
 | Biome | Lint e formatação conforme configuração existente. | Qualidade geral |
@@ -235,7 +236,7 @@ recente (AC-6.2).
 
 ## External APIs
 
-### Open-Meteo Geocoding API — proposta
+### Open-Meteo Geocoding API — decisão desta entrega
 
 - **Método/endpoint:** `GET https://geocoding-api.open-meteo.com/v1/search`
 - **Parâmetros propostos:**
@@ -255,7 +256,7 @@ Exemplo de formato de requisição:
 GET /v1/search?name={query}&count=10&language=pt&format=json
 ```
 
-### Open-Meteo Forecast API — proposta
+### Open-Meteo Forecast API — decisão desta entrega
 
 - **Método/endpoint:** `GET https://api.open-meteo.com/v1/forecast`
 - **Parâmetros mínimos propostos:**
@@ -270,9 +271,11 @@ GET /v1/search?name={query}&count=10&language=pt&format=json
   domínio; a UI converte para Fahrenheit quando selecionado.
 - **Validação:** confirmar status HTTP, estrutura e comprimentos coerentes dos
   arrays diários; exigir clima atual e exatamente cinco registros para sucesso.
-- **Observação de produto:** `forecast_days=5` precisa ser validado contra a
-  definição final de cinco dias; confirmar explicitamente se a data corrente
-  conta como um dos cinco dias.
+- **Período:** cinco datas consecutivas do calendário local retornadas em
+  ordem cronológica por `forecast_days=5` e `timezone=auto`, incluindo a
+  primeira data diária da resposta. O contrato está registrado em
+  `docs/weather-app-product-decisions.md`; a confirmação formal de Produto
+  continua sendo gate para publicação externa.
 
 Exemplo de formato de requisição:
 
@@ -283,9 +286,9 @@ GET /v1/forecast?latitude={lat}&longitude={lon}
   &forecast_days=5&timezone=auto
 ```
 
-As URLs e parâmetros são uma proposta técnica baseada na API pública do
-Open-Meteo. Confirmar termos de uso, atribuição, disponibilidade, cobertura
-geográfica e estabilidade antes de fixar a fonte como requisito de produto.
+As URLs e parâmetros são a decisão técnica desta entrega baseada na API pública
+do Open-Meteo. Confirmar termos de uso, atribuição, disponibilidade, cobertura
+geográfica e estabilidade antes de publicação externa.
 
 ### Contratos do serviço
 
@@ -342,8 +345,8 @@ cidade já selecionada (FR-07; AC-7.3).
   de ajustar o termo.
 - **Rede, HTTP e timeout:** mapear para erro tipado e mensagem em português,
   preservar contexto da operação e oferecer nova tentativa quando aplicável.
-  Proposta inicial de timeout: 10 segundos; Produto deve confirmar ou ajustar
-  esse limite (Open Question 10).
+  Timeout definido para esta entrega: 10 segundos por requisição; confirmar ou
+  ajustar esse limite com Produto antes de publicação externa (Open Question 10).
 - **Resposta inválida/incompleta:** falhar explicitamente; não converter payload
   malformado em lista vazia nem preencher dados ausentes com valores padrão
   (AC-2.4 e AC-3.3).
@@ -410,7 +413,7 @@ deste plano.
 
 | Risco / trade-off | Consequência | Decisão ou mitigação |
 |---|---|---|
-| Open-Meteo ainda não foi aprovado por Produto. | Cobertura, termos ou disponibilidade podem não satisfazer o produto. | Tratar como fonte proposta; confirmar cobertura, atribuição e termos antes de congelar a integração. Manter a integração isolada no serviço facilita substituição sem acoplar UI. |
+| Open-Meteo ainda não recebeu aprovação formal de Produto para publicação externa. | Cobertura, termos ou disponibilidade podem não satisfazer o produto. | Usar como fonte da entrega SDD conforme as instruções do repositório; confirmar cobertura, atribuição e termos antes de publicar externamente. Manter a integração isolada no serviço facilita substituição sem acoplar UI. |
 | Chamadas diretas do browser dependem de conectividade, disponibilidade externa e CORS do provedor. | Falha de serviço interrompe busca/consulta; não há cache ou fallback. | Tratar erros e timeout explicitamente. Introduzir backend/proxy só se requisitos de segurança, quota ou disponibilidade exigirem. |
 | Detalhes de clima atual e previsão permanecem em aberto. | Contratos de dados e apresentação podem mudar quando os campos forem definidos. | Limitar os campos obrigatórios aos mínimos propostos para temperatura e condição; deixar demais métricas opcionais até confirmação. |
 | Definição temporal dos cinco dias não foi decidida. | O dia corrente pode ocupar uma das cinco entradas ou ser excluído conforme a expectativa. | Usar timezone local da cidade e validar a interpretação de `forecast_days=5` com Produto antes de encerrar a implementação. |

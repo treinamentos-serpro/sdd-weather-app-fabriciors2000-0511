@@ -109,6 +109,7 @@ describe('App', () => {
     await user.keyboard('{Enter}');
 
     expect(await screen.findByRole('region', { name: /clima atual/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/buscar cidade/i)).toHaveFocus();
   });
 
   it('shows an empty state when no city matches', async () => {
@@ -151,9 +152,13 @@ describe('App', () => {
     vi.mocked(getWeather).mockResolvedValue({
       ...WEATHER,
       current: { ...WEATHER.current, temperature: null, humidity: null },
-      forecast: WEATHER.forecast.map((day, index) =>
-        index === 0 ? { ...day, max: null, precipitationProbability: null } : day,
-      ),
+      forecast: [
+        { ...WEATHER.forecast[0], max: null, precipitationProbability: null },
+        WEATHER.forecast[1],
+        WEATHER.forecast[2],
+        WEATHER.forecast[3],
+        WEATHER.forecast[4],
+      ],
     });
     const user = userEvent.setup();
     render(<App />);
