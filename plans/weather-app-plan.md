@@ -325,9 +325,9 @@ O estado deve manter separadamente:
 
 A separação evita que “busca sem resultados” seja confundida com erro de
 previsão e permite apresentar a unidade sem refazer chamadas (AC-1.2, AC-4.3 e
-AC-7.1). O estado inicial da unidade e sua persistência entre sessões aguardam
-decisão (Open Question 8). Até essa decisão, não persistir em `localStorage` ou
-em conta de usuário.
+AC-7.1). Para esta entrega, a unidade inicial é Celsius e a preferência não é
+persistida em `localStorage` ou em conta de usuário. A aprovação formal de
+Produto para publicação externa continua pendente (Open Question 8).
 
 Cada novo fluxo de busca/consulta deve invalidar ou cancelar o anterior quando
 ele puder produzir resposta obsoleta. A ação de tentar novamente repete somente
@@ -416,9 +416,9 @@ deste plano.
 | Open-Meteo ainda não recebeu aprovação formal de Produto para publicação externa. | Cobertura, termos ou disponibilidade podem não satisfazer o produto. | Usar como fonte da entrega SDD conforme as instruções do repositório; confirmar cobertura, atribuição e termos antes de publicar externamente. Manter a integração isolada no serviço facilita substituição sem acoplar UI. |
 | Chamadas diretas do browser dependem de conectividade, disponibilidade externa e CORS do provedor. | Falha de serviço interrompe busca/consulta; não há cache ou fallback. | Tratar erros e timeout explicitamente. Introduzir backend/proxy só se requisitos de segurança, quota ou disponibilidade exigirem. |
 | Detalhes de clima atual e previsão permanecem em aberto. | Contratos de dados e apresentação podem mudar quando os campos forem definidos. | Limitar os campos obrigatórios aos mínimos propostos para temperatura e condição; deixar demais métricas opcionais até confirmação. |
-| Definição temporal dos cinco dias não foi decidida. | O dia corrente pode ocupar uma das cinco entradas ou ser excluído conforme a expectativa. | Usar timezone local da cidade e validar a interpretação de `forecast_days=5` com Produto antes de encerrar a implementação. |
+| A definição temporal dos cinco dias adotada ainda não foi aprovada formalmente por Produto. | A expectativa externa pode diferir das cinco datas locais implementadas. | Esta entrega usa cinco datas locais consecutivas na ordem da API; solicitar confirmação formal antes de publicação externa. |
 | Conversão de unidade apenas na UI mantém uma única unidade canônica, mas exige conversão consistente em todos os componentes. | Um componente pode exibir temperatura em unidade diferente. | Centralizar conversão em função pura compartilhada e testar clima atual e previsão juntos. |
 | Uma máquina de estados simples exige controle de respostas obsoletas. | Resposta lenta anterior pode sobrescrever seleção recente. | Usar `AbortController` quando possível e validar identidade da requisição/cidade antes de publicar estado. |
 | Contagem exata de cinco dias como tupla melhora o contrato de domínio, mas depende de validação runtime. | Payload externo não confiável pode violar o tipo declarado. | Validar estrutura e quantidade no serviço antes de construir `WeatherData`; não confiar em casts de payload. |
-| Sem persistência reduz complexidade, mas preferências e cidade não sobrevivem à recarga. | Pode haver expectativa de lembrar unidade ou local. | Não persistir até a decisão explícita sobre estado inicial e preferência entre sessões (Open Question 8). |
+| Sem persistência reduz complexidade, mas preferências e cidade não sobrevivem à recarga. | Pode haver expectativa de lembrar unidade ou local. | Esta entrega inicia em Celsius e não persiste unidade/cidade; confirmar a expectativa de Produto antes de publicação externa (Open Question 8). |
 | Métricas de performance, matriz de dispositivos e padrão de acessibilidade ainda não foram definidos. | Difícil demonstrar conformidade quantitativa. | Confirmar metas e dispositivos prioritários antes de definir critérios de release (NFR-01 a NFR-03; Open Questions 10 e 12). |

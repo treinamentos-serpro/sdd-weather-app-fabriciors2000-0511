@@ -42,4 +42,18 @@ describe('SearchBar', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('1 cidade encontrada.');
   });
+
+  it('anuncia múltiplos resultados no plural', () => {
+    render(
+      <SearchBar
+        onSearch={vi.fn()}
+        results={[
+          { id: 1, name: 'Lisboa', country: 'Portugal', latitude: 38.72, longitude: -9.14 },
+          { id: 2, name: 'Porto', country: 'Portugal', latitude: 41.15, longitude: -8.61 },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('2 cidades encontradas.');
+  });
 });

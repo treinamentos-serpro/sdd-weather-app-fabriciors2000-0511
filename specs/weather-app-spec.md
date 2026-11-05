@@ -119,8 +119,10 @@ em dispositivos móveis. Os detalhes ainda não decididos estão registrados em
   previsão devem manter os mesmos locais e períodos; somente sua representação
   em unidade deve mudar.
 - **AC-4.4:** A unidade selecionada deve ser identificável junto aos valores
-  exibidos. A unidade inicial e a persistência da preferência entre sessões
-  permanecem pendentes de decisão.
+  exibidos. Para esta entrega, a unidade inicial é Celsius e a preferência não
+  é persistida entre sessões, conforme
+  [`docs/weather-app-product-decisions.md`](../docs/weather-app-product-decisions.md).
+  A aprovação formal de Produto para publicação externa permanece pendente.
 
 ### História 5 — Usar em um dispositivo móvel
 
@@ -245,8 +247,9 @@ identificadas no Discovery e fechar os critérios de produto:
    requeridos para publicação externa?
 7. A interface deve mostrar horário local da cidade, origem dos dados e horário
    da última atualização? Como agir se a fonte não fornecer esses metadados?
-8. A unidade inicial deve ser Celsius ou Fahrenheit, ou determinada por alguma
-   regra? A preferência deve persistir após recarregar ou reabrir a aplicação?
+8. A unidade inicial em Celsius e a ausência de persistência adotadas nesta
+   entrega atendem à expectativa de Produto ou devem ser alteradas antes da
+   publicação externa?
 9. A troca entre Celsius e Fahrenheit afeta somente temperaturas? Como devem
    ser tratadas outras grandezas meteorológicas?
 10. O timeout de 10 segundos adotado nesta entrega é adequado? Quais metas de
