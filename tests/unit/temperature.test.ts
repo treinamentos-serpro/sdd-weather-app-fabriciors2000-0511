@@ -18,9 +18,14 @@ describe('temperature', () => {
     expect(convertTemperature(0, 'fahrenheit')).toBe(32);
   });
 
-  it('formata com símbolo de grau e arredondamento', () => {
-    expect(formatTemperature(20.4, 'celsius')).toBe('20°');
-    expect(formatTemperature(0, 'fahrenheit')).toBe('32°');
+  it('formata com símbolo da unidade e arredondamento', () => {
+    expect(formatTemperature(20.4, 'celsius')).toBe('20°C');
+    expect(formatTemperature(0, 'fahrenheit')).toBe('32°F');
+  });
+
+  it('indica indisponibilidade sem inventar uma temperatura', () => {
+    expect(formatTemperature(null, 'celsius')).toBe('—');
+    expect(formatTemperature(null, 'fahrenheit')).toBe('—');
   });
 
   it('retorna o rótulo da unidade', () => {

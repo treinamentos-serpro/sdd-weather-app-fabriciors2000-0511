@@ -21,27 +21,35 @@ export interface City {
 
 /** Condições atuais. Temperatura sempre em °C. */
 export interface CurrentWeather {
-  temperature: number;
-  weatherCode: number;
-  humidity: number;
-  windSpeed: number;
-  pressure: number;
-  precipitation: number;
-  time: string;
+  temperature: number | null;
+  weatherCode: number | null;
+  humidity: number | null;
+  windSpeed: number | null;
+  pressure: number | null;
+  precipitation: number | null;
+  time: string | null;
 }
 
 /** Um dia da previsão. Temperaturas sempre em °C. */
 export interface ForecastDay {
   date: string;
-  min: number;
-  max: number;
-  weatherCode: number;
-  precipitationProbability: number;
+  min: number | null;
+  max: number | null;
+  weatherCode: number | null;
+  precipitationProbability: number | null;
 }
+
+export type FiveDayForecast = readonly [
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+  ForecastDay,
+];
 
 /** Agregado entregue à UI: cidade + clima atual + 5 dias de previsão. */
 export interface WeatherData {
   city: City;
   current: CurrentWeather;
-  forecast: ForecastDay[];
+  forecast: FiveDayForecast;
 }
